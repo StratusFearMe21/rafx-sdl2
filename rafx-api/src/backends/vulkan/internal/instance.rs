@@ -9,7 +9,6 @@ use crate::vulkan::VkCreateInstanceError::VkError;
 use crate::vulkan::{VkDebugReporter, VkEntry};
 use ash::extensions::ext::DebugUtils;
 use ash::vk::DebugUtilsMessageTypeFlagsEXT;
-use raw_window_handle::HasRawWindowHandle;
 use std::sync::Arc;
 
 /// Create one of these at startup. It never gets lost/destroyed.
@@ -62,7 +61,7 @@ impl VkInstance {
     /// Creates a vulkan instance.
     pub fn new(
         entry: VkEntry,
-        window: &dyn HasRawWindowHandle,
+        window: &sdl2::video::Window,
         app_name: &CString,
         require_validation_layers_present: bool,
         validation_layer_debug_report_flags: vk::DebugUtilsMessageSeverityFlagsEXT,
@@ -110,7 +109,12 @@ impl VkInstance {
             .api_version(vulkan_version);
 
         let mut layer_names = vec![];
-        let mut extension_names = ash_window::enumerate_required_extensions(window)?;
+        let mut extension_names = window
+            .vulkan_instance_extensions()
+            .unwrap()
+            .iter()
+            .map(|s| unsafe { CStr::from_ptr(s.as_ptr().cast()) })
+            .collect::<Vec<&CStr>>();
         if !validation_layer_debug_report_flags.is_empty() {
             // Find the best validation layer that's available
             let best_validation_layer = VkInstance::find_best_validation_layer(&layers);

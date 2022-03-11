@@ -1,6 +1,5 @@
 use super::internal::*;
 use ash::vk;
-use raw_window_handle::HasRawWindowHandle;
 use std::sync::Arc;
 
 use crate::vulkan::{RafxDeviceContextVulkan, RafxDeviceContextVulkanInner};
@@ -85,7 +84,7 @@ impl RafxApiVulkan {
     /// be considered unsafe. However, rafx APIs are only gated by unsafe if they can cause undefined
     /// behavior on the CPU for reasons other than interacting with the GPU.
     pub unsafe fn new(
-        window: &dyn HasRawWindowHandle,
+        window: &sdl2::video::Window,
         _api_def: &RafxApiDef,
         vk_api_def: &RafxApiDefVulkan,
     ) -> RafxResult<Self> {

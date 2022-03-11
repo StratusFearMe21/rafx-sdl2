@@ -1,9 +1,8 @@
 use crate::vulkan::{
     RafxDeviceContextVulkan, RafxFenceVulkan, RafxRawImageVulkan, RafxSemaphoreVulkan, VkEntry,
 };
-use ash::version::DeviceV1_0;
+use ash::version::{DeviceV1_0, InstanceV1_0};
 use ash::vk;
-use raw_window_handle::HasRawWindowHandle;
 use std::sync::Arc;
 
 use ash::extensions::khr;
@@ -124,18 +123,19 @@ impl RafxSwapchainVulkan {
 
     pub fn new(
         device_context: &RafxDeviceContextVulkan,
-        raw_window_handle: &dyn HasRawWindowHandle,
+        raw_window_handle: &sdl2::video::Window,
         swapchain_def: &RafxSwapchainDef,
     ) -> RafxResult<RafxSwapchainVulkan> {
         // Get the surface, needed to select the best queue family
-        let surface = unsafe {
-            ash_window::create_surface(
-                &*device_context.entry(),
-                device_context.instance(),
-                raw_window_handle,
-                None,
-            )?
-        };
+        use crate::vulkan::swapchain::vk::Handle;
+        use crate::vulkan::swapchain::vk::SurfaceKHR;
+        let surface = SurfaceKHR::from_raw(
+            raw_window_handle
+                .vulkan_create_surface(unsafe {
+                    std::mem::transmute(device_context.instance().handle())
+                })
+                .unwrap(),
+        );
 
         let surface_loader = Arc::new(match &device_context.entry() {
             VkEntry::Dynamic(entry) => khr::Surface::new(entry, device_context.instance()),

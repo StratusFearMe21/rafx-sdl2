@@ -17,7 +17,6 @@ use crate::metal::RafxDeviceContextMetal;
 #[cfg(feature = "rafx-vulkan")]
 use crate::vulkan::RafxDeviceContextVulkan;
 use crate::*;
-use raw_window_handle::HasRawWindowHandle;
 
 /// A cloneable, thread-safe handle used to create graphics resources.
 ///
@@ -209,7 +208,7 @@ impl RafxDeviceContext {
     /// Create a swapchain
     pub fn create_swapchain(
         &self,
-        raw_window_handle: &dyn HasRawWindowHandle,
+        raw_window_handle: &sdl2::video::Window,
         swapchain_def: &RafxSwapchainDef,
     ) -> RafxResult<RafxSwapchain> {
         Ok(match self {

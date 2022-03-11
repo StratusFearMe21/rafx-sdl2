@@ -225,7 +225,7 @@ pub use gpu_allocator;
 //
 // Re-export upstream API-agnostic crates
 //
-pub use raw_window_handle;
+pub use sdl2;
 
 //
 // Backends

@@ -2,7 +2,6 @@ use super::internal::*;
 use crate::*;
 use ash::version::{DeviceV1_0, InstanceV1_0};
 use ash::vk;
-use raw_window_handle::HasRawWindowHandle;
 use std::mem::ManuallyDrop;
 use std::sync::{Arc, Mutex};
 
@@ -366,7 +365,7 @@ impl RafxDeviceContextVulkan {
 
     pub fn create_swapchain(
         &self,
-        raw_window_handle: &dyn HasRawWindowHandle,
+        raw_window_handle: &sdl2::video::Window,
         swapchain_def: &RafxSwapchainDef,
     ) -> RafxResult<RafxSwapchainVulkan> {
         RafxSwapchainVulkan::new(self, raw_window_handle, swapchain_def)
