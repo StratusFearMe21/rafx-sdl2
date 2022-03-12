@@ -134,7 +134,7 @@ impl RafxSwapchainVulkan {
                 .vulkan_create_surface(unsafe {
                     std::mem::transmute(device_context.instance().handle())
                 })
-                .unwrap(),
+                .map_err(|f| RafxError::StringError(f))?,
         );
 
         let surface_loader = Arc::new(match &device_context.entry() {
